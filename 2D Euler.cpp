@@ -1,4 +1,4 @@
-// Solves the 2D Euler equations, using MacCormack's method (2nd order)
+// Solves the 2-dimensional Euler equations, using MacCormack's method (2nd order)
 // for the case of 
 
 #include <cstdlib>
