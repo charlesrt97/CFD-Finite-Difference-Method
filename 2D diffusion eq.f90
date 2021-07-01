@@ -1,6 +1,5 @@
-// Solves the 2-dimensional diffusion equation
+! Solves the 2-dimensional diffusion equation
 
-! resuelve la ecuacion de difusion en 2 DIMENSIONES
 ! sujeta a condicion inicial: T(x,0)=20ºC (en todo el plato),
 
 ! definicion de variables
