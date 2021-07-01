@@ -1,4 +1,4 @@
-// 2-dimensional Kelvin-Helmholtz instability
+// 2-dimensional Kelvin-Helmholtz instability, using MacCormack's method (2nd order)
 
 #include <cstdlib>
 #include <fstream>
