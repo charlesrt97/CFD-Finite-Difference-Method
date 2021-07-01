@@ -1,5 +1,5 @@
 // Solves the 2-dimensional Euler equations (inviscid Navier-Stokes equations), using MacCormack's method (2nd order)
-// for the case of 
+// for the case of a Sod shock-tube
 
 #include <cstdlib>
 #include <fstream>
