@@ -149,15 +149,15 @@ void boundary(double U[ieq][NX+2][NY+2]) {
   for (int iieq = 0; iieq <= ieq-1; iieq++){
     for (int i=0; i <= NX+1; i++){
 
-      U[iieq][i][NY+1]=U[iieq][i][NY]; // lado arriba
-      U[iieq][i][0]=U[iieq][i][1];     // lado abajo
+      U[iieq][i][NY+1]=U[iieq][i][NY]; 
+      U[iieq][i][0]=U[iieq][i][1];    
     }
   }
 
   for (int iieq = 0; iieq <= ieq-1; iieq++){
     for (int j=0; j <= NY+1; j++){
-      U[iieq][NX+1][j]=U[iieq][NX][j]; // lado derecho
-      U[iieq][0][j]=U[iieq][1][j];     // lado izquierdo
+      U[iieq][NX+1][j]=U[iieq][NX][j];
+      U[iieq][0][j]=U[iieq][1][j];   
     }
   }
 }
