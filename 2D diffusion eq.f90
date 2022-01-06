@@ -1,12 +1,11 @@
 ! Solves the 2-dimensional diffusion equation, using a finite difference method
 
-! sujeta a condicion inicial: T(x,0)=20ºC (en todo el plato),
+! with the initial condition: T(x,y,0)=20ºC,
 
-! definicion de variables
-program difusion
+program diffusion
 implicit none
 
-! definicion de variables
+! sets up variables used
 integer :: nx, ny, i, tt, lx, xl, i_sample,n_serie,it,j
 real :: lambdax, dx, nx1, ny1, ly,lambday, yl, dy
 real, allocatable, dimension (:) :: x,y
@@ -16,14 +15,14 @@ character(16) outputfield
 character(2) serie
 character(3) sample
 
-nx=1000.0 ! tamaño de la malla direccion x
-ny=1000.0 ! tamaño de la malla direccion y
-nx1=500.0 ! tamaño de la malla direccion x flotante
-ny1=500.0 ! tamaño de la malla direccion y flotante
-lx=1.0; ! longitud x
-ly=1.0 ! longitud y
-xl=0 ! coordenada fisica extremo izquierdo
-yl=0 !coordenada fisica extremo
+nx=1000.0 ! mesh size, x-direction
+ny=1000.0 ! mesh size, y-direction
+nx1=500.0 ! mesh size, x-direction (float)
+ny1=500.0 ! mesh size, y-direction (float)
+lx=1.0; ! length in x
+ly=1.0 ! length in y
+xl=0 ! left physical coordinate
+yl=0
 lambdax=0.2
 lambday=0.2
 
@@ -39,17 +38,17 @@ allocate(T0(nx,ny))
 allocate(x(nx))
 allocate(y(ny))
 
-! condiciones iniciales
+! initial condition
 do i=1,nx
   do j=1,ny
     T0(i,j)=20.0 ! todo el plato a 20ºC
   end do
 end do
 
-! tiempo
+! time
 do tt=1,10000
 
-  ! vector x (posicion)
+  ! position vector, x and y
   do i=1,nx
     x(i)=xl+i*lx/(nx1)
   end do
@@ -58,7 +57,7 @@ do tt=1,10000
     y(i)=yl+i*ly/(ny1)
   end do
 
-  ! escribir archivos cada 100 unidades de tiempo
+  ! writes to disk 100 files
   if (it.eq.100) then
     i_sample=i_sample+1
     write(sample,'(i3.3)')i_sample
@@ -76,14 +75,14 @@ do tt=1,10000
     it=it+1
   end if
 
-  ! metodo explicito
+  ! explicit method
   do i=2,nx-1
     do j=2,ny-1
       T(i,j)=T0(i,j)+lambdax*(T0(i-1,j)-2*T0(i,j)+T0(i+1,j))+lambday*(T0(i,j-1)-2*T0(i,j)+T0(i,j+1))
     end do
   end do
 
-  ! aplicamos condiciones de frontera
+  ! applies boundary conditions
   do i=1,nx
     T(i,1)=30
     T(i,ny)=60
@@ -93,7 +92,6 @@ do tt=1,10000
     T(ny,j)=50
   end do
 
-  ! sobreescribe T a T0. Para tener a T0 como T^(n), y a T como T^(n+1)
   do i=1,nx
     do j=1,ny
       T0(i,j)=T(i,j)
@@ -104,4 +102,4 @@ end do
 
 100 format(f12.8,f12.8,f12.8)
 
-end program difusion
+end program diffusion
