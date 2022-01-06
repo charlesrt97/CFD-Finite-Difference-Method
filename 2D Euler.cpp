@@ -9,64 +9,62 @@
 using namespace std;
 
 /******************************************************************************/
-// CONSTANTES Y VARIABLES GLOBALES
 
-// Parámetros constantes de la simulación
-const int    NX = 500;         // Tamaño de la malla en x
+// constant parameters used for the simulation
+const int    NX = 500;         // mesh size in the x-direction
 const int    NY = 500;
 
 
-const double X1 = 0.0;         // Coordenada física del extremo izquierdo
-const double X2 = 2.0;         // Coordenada física del extremo derecho
+const double X1 = 0.0;         // left physical coordinate
+const double X2 = 2.0;         // right physical coordinate
 
 const double Y1 = 0.0;
 const double Y2 = 2.0;
 
-const double TFIN = 1.0;       // Tiempo final de integración
-const double CFL = 0.2;        // Parametro de Courant
-const double dtprint = 0.1;   // Intervalo para escribir a disco
+const double TFIN = 1.0;       // integration time
+const double CFL = 0.2;        // Courant parameter
+const double dtprint = 0.1;   // time interval to write to disk
 
 const double gam=1.4;
 
 const double eta = 0.1;
 
-const int ieq=4;   // numero de ecuaciones
+const int ieq=4;   // number of equations
 
-// Para tubo de choque: coord de la separación entre estados iniciales
+// for the schock-tube: coordinate of separation between initial states
 const double R = 0.4;
 
-// Para ecuación de advección: velocidad de ondas ('a' en las notas)
+// for advection: wave's velocity
 const double A = 1.0;
 
-// Constantes derivadas de las anteriores
 const double DX = (X2-X1)/NX;      // Espaciamiento de la malla en x
 const double DY = (Y2-Y1)/NY;
 
-// Variables globales
-double U[ieq][NX+2][NY+2];       // Variables conservadas actuales
-double G[ieq][NX+2][NY+2];       // Variables conservadas actuales
-double UP[ieq][NX+2][NY+2];      // Variables conservadas "avanzadas"
-double GP[ieq][NX+2][NY+2];       // Variables conservadas "avanzadas"
-double F[ieq][NX+2][NY+2];       // Flujos físicos
+// global variables
+double U[ieq][NX+2][NY+2];       // "current" conservative variables
+double G[ieq][NX+2][NY+2];       // "current" conservative variables
+double UP[ieq][NX+2][NY+2];      // "advanced" conservative variables
+double GP[ieq][NX+2][NY+2];       // "advanced" conservative variables
+double F[ieq][NX+2][NY+2];       // phyisical fluxes
 double P[ieq][NX+2][NY+2];
 double UT[ieq][NX+2][NY+2];
 double c_x[NX+2];
 double c_y[NY+2];
-double dt;            // Paso de tiempo
-double t;          // Tiempo actual
-int it;               // Iteración actual
-clock_t start;        // Tiempo de inicio
-double tprint;        // Tiempo para el siguiente output
-int itprint;          // Número de salida
+double dt;            // time step
+double t;          // current time
+int it;               // current iteration
+clock_t start;        // initial time
+double tprint;        // time for the following output
+int itprint;          // output number
 
 
 /******************************************************************************/
 
-// Impone las condiciones iniciales
+// sets initial conditions
 void initflow(double U[ieq][NX+2][NY+2]) {
 
-  // Inicializar los valores de U en todo el dominio
-  // Nótese que también llenamos las celdas fantasma
+// initializes U in all the domain
+// includes ghost cells
 double x;
 double y;
 double r;
@@ -102,7 +100,7 @@ const double po=0.1;
     }
   }
 
-  // Inicializar otras variables
+  // Initializes other variables
   t = 0;
   it = 0;
   itprint = 0;
@@ -112,17 +110,17 @@ const double po=0.1;
 
 /******************************************************************************/
 
-// Escribe a disco el estado de la simulación
+// writes to disk the state of the simulation
 void output(double U[ieq][NX+2][NY+2]) {
 
-  // Generar el nombre del archivo de salida
+  // generates output file's name
   char fname[80];
   sprintf(fname, "Lax_%02i.txt", itprint);
 
-  // Abrir el archivo
+  // opens the file
   fstream fout(fname, ios::out);
 
-  // Escribir los valores de U al archivo
+  // writes U values to disk
   double x;
 for (int iieq=0; iieq <= ieq-1; iieq++){
     for (int i=1; i <= NX; i++){
@@ -133,12 +131,11 @@ for (int iieq=0; iieq <= ieq-1; iieq++){
     }
   }
 
-  // Cerrar archivo
+  // closes the file
   fout.close();
 
-  printf("Se escribió salida %s\n", fname);
+  printf("Output %s\n", fname);
 
-  // Avanzar variables de output
   itprint = itprint + 1;
   tprint = itprint * dtprint;
 
@@ -146,8 +143,7 @@ for (int iieq=0; iieq <= ieq-1; iieq++){
 
 /******************************************************************************/
 
-// Aplicar condiciones de frontera a celdas fantasma
-// El arreglo pasado es al que aplicaremos las BCs
+// applies boundary conditions to ghost cells
 void boundary(double U[ieq][NX+2][NY+2]) {
 
   for (int iieq = 0; iieq <= ieq-1; iieq++){
@@ -167,7 +163,7 @@ void boundary(double U[ieq][NX+2][NY+2]) {
 }
 /******************************************************************************/
 
-// Calcular las primitivas
+// computes primitives, including ghost cells
 void primitivas(double U[ieq][NX+2][NY+2], double P[ieq][NX+2][NY+2]) {
 
   for (int i=0; i<=NX+1; i++) {
@@ -180,7 +176,7 @@ void primitivas(double U[ieq][NX+2][NY+2], double P[ieq][NX+2][NY+2]) {
   }
 }
 
-// Calcular los flujos físicos F !tambien se incluyen las celdas fantasma
+// computes physical fluxes, including ghost cells
 void fluxes(double P[ieq][NX+2][NY+2], double F[ieq][NX+2][NY+2], double G[ieq][NX+2][NY+2]) {
 
   for (int i=0; i<=NX+1;i++) {
@@ -203,7 +199,7 @@ void fluxes(double P[ieq][NX+2][NY+2], double F[ieq][NX+2][NY+2], double G[ieq][
 
 /******************************************************************************/
 
-// Calcula el paso de tiempo resultante de la condición CFL
+// computes new time step resulting from the CFL condition
 double timestep(double P[ieq][NX+2][NY+2]) {
 
   double dt;
@@ -252,8 +248,7 @@ double timestep(double P[ieq][NX+2][NY+2]) {
 
 /******************************************************************************/
 
-// Aplica el método de Lax para obtener las UP a partir de las U
-// Supone que los flujos F ya fueron actualizados
+// applies the MacCormack's method to obtain the numerical intercell fluxes
 void mac(double U[ieq][NX+2][NY+2], double F[ieq][NX+2][NY+2], double UP[ieq][NX+2][NY+2], double G[ieq][NX+2][NY+2],double UT[ieq][NX+2][NY+2],double P[ieq][NX+2][NY+2]) {
 
 for (int iieq=0; iieq<=ieq-1; iieq++){
@@ -290,7 +285,7 @@ for (int iieq=0; iieq<=ieq-1; iieq++){
 
 /******************************************************************************/
 
-// Hace un paso de tiempo, volcando las UPs sobre las Us y avanzando variables
+// this represents one complete time step
 void stepviscoso(double U[ieq][NX+2][NY+2], double UP[ieq][NX+2][NY+2]) {
 
 for (int iieq=0; iieq<=ieq-1; iieq++){
@@ -331,36 +326,36 @@ for (int iieq=0; iieq<=ieq-1; iieq++){
 
 int main() {
 
-  // Condición inicial e inicializaciones
+  // initial conditions and initializes variables
   initflow(U);
 
   primitivas(U,P);
 
-  // Escribir condición inicial a disco
+  // writes initial conditions to disk
   output(P);
 
-  // Tiempo de inicio de la simulación
+  // simulation's initial time
   start = clock();
   while (t <= TFIN) {
 
     primitivas(U,P);
 
-    // Actualizar el paso de tiempo
+    // updates time step
     dt = timestep(U);
 
-    // Actualizar flujos físicos
+    // updates phyisical fluxes
     fluxes(P, F, G);
 
-    // Aplicar método de Lax para actualizar las UP
+    // applies MacCormack's method
     mac(U, F, UP, G, UT,P);
 
-    // Aplicar condiciones de frontera a las UP
+    // applies boundary conditions to the UP-variables
     boundary(UP);
 
-    // Avanzar en el tiempo
+    // this represents one complete time step
     stepviscoso(U, UP);
 
-    // Escribir a disco
+    // writes to disk
     if (t >= tprint) {
       primitivas(U,P);
       output(U);
@@ -368,7 +363,7 @@ int main() {
 
   }
 
-// Terminar
-cout << "\nSe calcularon " << it << " iteraciones en "
+// end
+cout << "\n Number of iterations: " << it << ". Time: "
      << (double)(clock() - start)/CLOCKS_PER_SEC << "s.\n\n";
 }
