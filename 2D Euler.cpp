@@ -164,7 +164,7 @@ void boundary(double U[ieq][NX+2][NY+2]) {
 /******************************************************************************/
 
 // computes primitives, including ghost cells
-void primitivas(double U[ieq][NX+2][NY+2], double P[ieq][NX+2][NY+2]) {
+void primitives(double U[ieq][NX+2][NY+2], double P[ieq][NX+2][NY+2]) {
 
   for (int i=0; i<=NX+1; i++) {
     for (int j=0; j<=NY+1; j++){
@@ -263,7 +263,7 @@ for (int iieq=0; iieq<=ieq-1; iieq++){
 
   boundary(UT);
 
-  primitivas(UT,P);
+  primitives(UT,P);
 
   fluxes(P,F,G);
 
@@ -329,7 +329,7 @@ int main() {
   // initial conditions and initializes variables
   initflow(U);
 
-  primitivas(U,P);
+  primitives(U,P);
 
   // writes initial conditions to disk
   output(P);
@@ -338,7 +338,7 @@ int main() {
   start = clock();
   while (t <= TFIN) {
 
-    primitivas(U,P);
+    primitives(U,P);
 
     // updates time step
     dt = timestep(U);
@@ -357,7 +357,7 @@ int main() {
 
     // writes to disk
     if (t >= tprint) {
-      primitivas(U,P);
+      primitives(U,P);
       output(U);
     }
 
