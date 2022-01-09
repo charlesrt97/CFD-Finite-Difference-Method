@@ -41,7 +41,7 @@ allocate(y(ny))
 ! initial condition
 do i=1,nx
   do j=1,ny
-    T0(i,j)=20.0 ! todo el plato a 20ºC
+    T0(i,j)=20.0
   end do
 end do
 
