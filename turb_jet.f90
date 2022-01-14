@@ -1,5 +1,6 @@
 ! Simulation of a 3D compressible turbulent jet flow
-! using a compact finite difference scheme and a turbulence model
+! solves the 3D compressible Navier-Stokes equations
+! using a compact finite difference scheme, a turbulence model and a 3rd order Runge-Kutte scheme
 
 ! For a higher convergence, a refined mesh or an unstructured mesh must be used
 !------------------------------------------------------------------------------
