@@ -1,7 +1,5 @@
 ! Solves the 2D transient heat conduction equation, using an explicit finite difference scheme
-! case: square plate, subjected to:
-! initial conditions: 20ºC (everywhere)
-! boundary conditions: 60ºC (top), 30ºC (bottom), 90ºC (left), 5ºC (right)
+! case: square plate, subjected to Dirichlet boundary conditions
 
 ! it adittionally creates vtk files for post-processing (using ParaView)
 
